@@ -1,0 +1,46 @@
+import requests
+import json
+from pprint import pprint
+import datetime
+r = requests.get("http://api.openweathermap.org/data/2.5/weather?q=Poitiers,fr&appid=2fd760807b08fc97be68c52954281198")
+data=r.json()
+#print(json.dumps(data,indent=2))
+#pprint(data)
+
+## passer de timestamp a date
+#ts = 1584005684
+#print(datetime.datetime.fromtimestamp(ts))
+
+##passer de date a timestamp
+#Regarder la methode now pour avoir la date d'aujourdui
+#d = datetime.datetime(year=2014, month=6,day=10, hour=11, minute=20)
+#print(d.timestamp())
+
+
+def resultat(ville):
+    r = requests.get("http://api.openweathermap.org/data/2.5/weather?q="+ville+",fr&appid=2fd760807b08fc97be68c52954281198")
+    data=r.json()
+    return(data['main']['temp'])
+    
+print(resultat("Poitiers"))
+
+def createTable():
+    fichier = open("table.txt",'w')
+    fichier.write("""CREATE TABLE meteo
+                  (
+                  id INT PRIMARY KEY NOT NULL AUTO_INCREMENT=0,
+                  ville VARCHAR(100),
+                  code_postal VARCHAR(5),
+                  date DATE,
+                  temperature VARCHAR(4),
+                  temps VARCHAR(20)
+                  )""")
+    fichier.close()
+    fichier = open('lignes.txt','w')
+    fichier.close()
+    
+def ajouterLigne(ville, code_postal, date, temperature, temps):
+    fichier = open('lignes.txt', 'a')
+    fichier.write('INSERT INTO meteo(ville, code_postal, date, temperature, temps)\n')
+    fichier.write('VALUES (\''+ville+'\', \''+code_postal+'\', \''+date+'\', \''+temperature+'\', \''+temps+'\');\n')
+    fichier.close()
