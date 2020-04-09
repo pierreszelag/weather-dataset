@@ -2,6 +2,7 @@ import requests
 import datetime
 import sqlite3
 import math
+from msvcrt import getch
 from time import process_time
 
 
@@ -14,14 +15,18 @@ def getDate(dataRequest):   #Recupere la date et l'heure a laquelle la meteo a e
 def getTemps(dataRequest):   #Recupere le temps a partir du resultat de la requete
     return(dataRequest['weather'][0]['main'])
 
+
 def ajouterLigneBDD(ville, cursor):   #Ajoute la une ligne dans la bdd. On prend la ville choisie en argument. On indique aussi cursor pour etre liee a la bonne BDD.
     req = requests.get("http://api.openweathermap.org/data/2.5/weather?q="+ville+",fr&appid=2fd760807b08fc97be68c52954281198")
     data = req.json()
-    if data['cod'] != 404 :   #On verifie que la ville soit trouvable
-        print(ville)
+    if data['cod'] != '404' :   #On verifie que la ville soit trouvable
+        print("ajout de "+ville)
         cursor.execute("""
                    INSERT INTO meteo(ville, date, temperature, temps) 
                    VALUES(?, ?, ?, ?)""",(ville, getDate(data), getTemperature(data), getTemps(data)))
+    else :
+        print(ville+" n'existe pas")
+                           
     
 def creerTable():
     conn = sqlite3.connect('meteoBDD.db')   #Etablie la connection avec la bdd
@@ -42,7 +47,6 @@ def ajouterPlusieursLignes(listeVilles): #On est limité à 60 requetes par minu
     conn = sqlite3.connect('meteoBDD.db')   #Etablie la connection avec la bdd
     cursor = conn.cursor()
     for ville in listeVilles:
-        print(ville)
         ajouterLigneBDD(ville, cursor)
     conn.commit()   #commit les modifications
     conn.close()   #ferme la connection
@@ -66,14 +70,17 @@ def subdivisionListeVilles(listeVilles):   #On a 3000 villes mais on ne peut en 
 
 
 def main(subdListeVilles):
-    minute = 0   #Compte les minutes, le programme fait des boucles d'une heure
-    while 1 :
-        print('ok')
+    minute = -1   #Compte les minutes, le programme fait des boucles d'une heure
+    arret = False
+    while arret == False :
+        minute = (minute+1)%60
         t_start = process_time()
         ajouterPlusieursLignes(subdListeVilles[minute])   #on ajoute toute les villes qui doivent etre ajoutees a cette minute precise
         t_stop = process_time()
-        print(t_start - t_stop)
-        while (t_start - t_stop) < 60:   #Si le programme run trop vite, on attend la fin de la minute avant de passer aux villes suivantes
+        print("attente de "+str(60-(t_stop - t_start))+" seconde pour avoir plus de requetes possibles")
+        while (t_stop - t_start) < 60 and arret == False:   #Si le programme run trop vite, on attend la fin de la minute avant de passer aux villes suivantes
+            ##C'EST ICI QU'ON VEUT METTRE L'INPUT
+            ##APPAREMENT IL FAUT UTILISER GETCH() MAIS CA NE MARCHE PAS SUR MON PC
             t_stop = process_time()
 
 
@@ -3080,3 +3087,6 @@ listeVilles = ["Paris",  #On cree subdListeVilles plus bas, la subdivision de la
 "Saint-Gildas-des-Bois"
 ]
 subdListeVilles = subdivisionListeVilles(listeVilles)
+
+
+
