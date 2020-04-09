@@ -93,5 +93,5 @@ with open('./cities/sortedcities3000.csv') as csvFile:
 
 
 subdListeVilles = subdivisionListeVilles(listeVilles)
-creerTable()
+
 main(subdListeVilles)
