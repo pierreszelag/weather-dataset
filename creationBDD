@@ -1,3 +1,5 @@
+
+
 import requests
 import datetime
 import sqlite3
@@ -57,7 +59,7 @@ def recupererMeteoVille(ville) :  #donne les resultats d'une ville dans la bdd
     cursor.execute("""SELECT ville, date, temperature, temps FROM meteo WHERE ville = ?""", (ville,))
     rows = cursor.fetchall()
     for row in rows :
-        print('{0} : {1} - {2} - {3}'.format(row[0], row[1], row[2], row[3]))
+        print('{0}   date : {1} - temperature : {2}°C - temps : {3}'.format(row[0], row[1], int(row[2]-273), row[3]))
     conn.close()   #ferme la connection
     
 def subdivisionListeVilles(listeVilles):   #On a 3000 villes mais on ne peut en traiter que 50 par minute car l'API est limitee
@@ -3087,6 +3089,4 @@ listeVilles = ["Paris",  #On cree subdListeVilles plus bas, la subdivision de la
 "Saint-Gildas-des-Bois"
 ]
 subdListeVilles = subdivisionListeVilles(listeVilles)
-
-
 
