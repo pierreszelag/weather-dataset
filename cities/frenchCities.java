@@ -53,7 +53,7 @@ public class frenchCities {
         FileWriter myWriter = new FileWriter("sortedcities3000.csv");
 
         for (String city: this.sortedCities){
-            myWriter.write(city + ",\n");
+            myWriter.write(city + ",");
         }
 
         myWriter.close();
