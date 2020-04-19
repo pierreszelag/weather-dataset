@@ -1,0 +1,75 @@
+from BaseDeDonnee import BaseDeDonnee
+from Affichage import Affichage
+
+class Controle :
+    def __init__(self, bdd):
+        #instances en lien avec celle-ci
+        self.bdd = bdd
+        self.affichage = Affichage()
+        
+        #Gestion de resultats et de l'affichage
+        self.listeVilles = None
+        self.ecrire = False #dit si on est en train d'ecrire dans la barre de recherche
+        self.barreRecherche = "" #texte ecrit dans la barre de recherche
+        self.villesCherchees = [] #liste des villes qu'il faudra afficher
+        self.numeroVilleCherchee = 0 #numero de la premiere ville qu'on affiche
+        self.listeReponses = [] #liste des responses recuperees dans la bdd
+        self.numeroReponse = 0 #numero de la premiere reponse qu'on affiche
+        self.typeAffichage = "Villes" #Si on doit afficher le tableau "Ville" ou le tableau "Recherche"
+        
+        
+    #INITIALISATION    
+    def initialiser(self):
+        self.listeVilles = self.bdd.getListeVilles()
+        
+    def inputKeyboard(self, event):
+        print(event)
+        
+    #ON VA TESTER LES BOUTONS. CHAQUE BOUTON QUI NE CORRESPOND PAS VA APPELER LE SUIVANT
+    def inputMouse(self, event):
+        x = event.pos[0]
+        y = event.pos[1]
+        self.clicBarreRecherche(x, y) #clic sur la barre de recherche
+    
+    def clicBarreRecherche(self, x, y): #clic sur la barre de recherche
+        if (575 <= x <= 715) and (50 <= y <= 90):
+            pass
+        else :
+            self.ecrire = False #On a clique en dehors de la barre de recherche. On ne peut plus ecrire dedans.
+            self.clicResultats(x, y) #clic sur la zone des resultats
+            
+    def clicResultats(self, x, y): #clic sur la zone des resultats
+        if (50 <= x <= 550) and (50 <= y <= 550) :
+            pass
+        else :
+            self.clicRetour(x, y) #clic sur le bouton retour
+                
+    def clicRetour(self, x, y): #clic sur le bouton retour
+        if (450 <= x <= 480) and (10 <= y <= 40):
+            pass
+        else :
+            self.clicSuivant(x, y) #clic sur le bouton suivant
+            
+    def clicSuivant(self, x, y): #clic sur le bouton suivant
+        if (500 <= x <= 530) and (10 <= y <= 40):
+            pass
+        else :
+            self.clicValider(x, y) #clic sur le bouton valider
+
+    def clicValider(self, x, y): #clic sur le bouton valider
+        if (730 <= x <= 760) and (55 <= y <= 85):
+            pass
+        
+    
+    #INTERFACE GRAPHIQUE
+    def display(self):  #On met tout en argument (les arguments vides ne seront pas utilises), la classe Affichage se chargera du tri.
+                        #On aurait pu faire l'affichage dans cette classe. L'utilite est de gagner en clarte.
+        self.affichage.display(self.barreRecherche,
+                               self.villesCherchees,
+                               self.numeroVilleCherchee,
+                               self.listeReponses,
+                               self.numeroReponse,
+                               self.typeAffichage)
+        
+        
+    
