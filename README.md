@@ -76,6 +76,11 @@ Dans ce cas là, la BDD ne peut être ouverte par le thread pour être mise à j
 -Le programme récupère d'abord le resultats des 60 requetes qu'il enregistre dans une liste. Cela permet une fois les 60 requetes acquises d'ouvrir la BDD, les rentrer dedans, et fermer la BDD instantanément. Cela ne prend donc que quelques millisecondes (alors qu'enregistrer les requetes une après l'autre peut garder la BDD ouverte plusieurs secondes).
 
 
+•SAUVEGARDE DE LA PROGRESSION :
+
+La première ligne du fichier villes.txt est un nombre. Ce nombre correspond au numéro de la ville à laquelle on s'est arrêté lors de la dernière mise à jour de la BDD. A chaque mise à jour de la BDD, on modifie cette valeur directement dans le fichier .txt. Cela permet de fermer puis réouvrir le programme, sans recommencer à la première ville de la liste.
+
+
 •FERMETURE DU PROGRAMME :
 
 La fermeture propre du programme est un problème. Quand on clique sur la croix de l'interface graphique, on veut que le programme s'arrête le plus vite possible. Cela pose deux problèmes:
@@ -90,9 +95,6 @@ Il existe une variable bdd.finProgramme (bdd est une instance de la classe BaseD
 -Après chaque requete, si bdd.finProgramme == True, on abandonne la mise à jour de la bdd pour arreter le programme au plus vite.
 
 
-•SAUVEGARDE DE LA PROGRESSION :
-
-La première ligne du fichier villes.txt est un nombre. Ce nombre correspond au numéro de la ville à laquelle on s'est arrêté lors de la dernière mise à jour de la BDD. A chaque mise à jour de la BDD, on modifie cette valeur directement dans le fichier .txt. Cela permet de fermer puis réouvrir le programme, sans recommencer à la première ville de la liste.
 
 ...
 
