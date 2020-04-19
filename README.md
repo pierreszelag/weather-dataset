@@ -56,6 +56,7 @@ Le fichier que nous vous fournissons contient 3000 villes. Pour cela nous avons 
 
 
 •FICHIER BASE DE DONNEE :
+
 La base de donnée est gérée par le moduble sqlite3 et est enregistrée dans un fichier nommé "meteoBDD.db".
 Ce fichier est facultatif ! Nous vous fournissons un fichier pré-rempli pour que vous puissiez expérimenter le programme. Si vous ne le téléchargez pas, le programme en crééra un vierge qui sera tout aussi fonctionnel.
 
