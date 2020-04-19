@@ -1,0 +1,15 @@
+import pygame
+
+class Affichage:
+    def __init__(self):
+        self.screen = pygame.display.set_mode((800,600))
+        
+    def display(self):
+        self.screen.fill((255,255,255)) #Efface l'ecran
+        pygame.draw.rect(self.screen,(0,0,0),(50,50,500,500), 2) #grand rectangle de gauche
+        pygame.draw.rect(self.screen,(0,0,0),(575,120,200,430), 2) #grand rectangle de droite
+        pygame.draw.rect(self.screen,(0,0,0),(575,50,140,40), 2) #barre de recherche
+        pygame.draw.rect(self.screen,(0,0,0),(730,55,30,30), 2) #bouton valider
+        pygame.draw.rect(self.screen,(0,0,0),(450,10,30,30), 2) #bouton retour
+        pygame.draw.rect(self.screen,(0,0,0),(500,10,30,30), 2) #bouton suivant
+        pygame.display.flip()
