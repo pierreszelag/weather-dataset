@@ -1,5 +1,11 @@
 import datetime
+import threading
 from BaseDeDonnee import BaseDeDonnee
+from Controle import Controle
+import pygame
+
+pygame.init()
+screen = pygame.display.set_mode((600,600))
 
 ##/!\
 ##ATTENTION : Nous sommes limites a 60 requetes par minutes. Si plusieures personnes utilisent ce programme avec la meme cle API, il risque d'y avoir des problemes.
@@ -16,14 +22,32 @@ fichierVilles = "villes.txt"
 #Si vous creez votre propre fichier villes, la première ligne doit être un "0". C'est une valeur de sauvegarde qui servira au programme à reprendre là où il en etait la prochaine fois.
 
 
-BDD = BaseDeDonnee(fichierVilles, fichierBDD, cleAPI)
-BDD.initialiser() #Cree le fichier BDD s'il n'existe pas. 
+bdd = BaseDeDonnee(fichierVilles, fichierBDD, cleAPI)
+bdd.initialiser() #Cree le fichier BDD s'il n'existe pas. 
                   #Recupere les villes du fichier villes. 
                   #Retrouve a quelle ville il s'en etait arrete (premiere ligne du fichier villes)
                   #redefinie la taille de la liste des villes (on peut ainsi en rajouter)
 
+controle = Controle(bdd)  #Va mettre en relation les differentes classes, et gerer les inputs
+controle.initialiser()
+  
+def mettreAJourBDD(BDD):
+    while bdd.finProgramme == False :
+        if (BDD.tempsDernieresRequetes == None) or (datetime.datetime.now() - BDD.tempsDernieresRequetes).seconds >= 60 :
+            BDD.enregistrer()
+            
+x = threading.Thread(target=mettreAJourBDD, args=(bdd,))
+x.start()
 
-while 1 :
-    if (BDD.tempsDernieresRequetes == None) or (datetime.datetime.now() - BDD.tempsDernieresRequetes).seconds >= 60 :
-        BDD.enregistrer()
+while bdd.finProgramme == False :
+    event = pygame.event.wait() #En attente de l'utilisateur
     
+    if event.type == pygame.QUIT: #Si on clique sur le croix rouge
+        pygame.quit()  #On ferme la fenetre
+        bdd.setFinProgramme()  #On coupe le programme (on n'oublie pas le thread). 
+    
+    else :  #Si on appuie sur la sourie ou sur le clavier on envoie l'information au controleur
+        if event.type == pygame.MOUSEBUTTONDOWN :
+            controle.inputMouse(event) 
+        elif event.type == pygame.KEYDOWN :
+            controle.inputKeyboard(event)
