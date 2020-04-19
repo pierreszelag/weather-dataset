@@ -1,4 +1,4 @@
-Ce programme gère une base de donnée contenant la météo des villes fournies au cours du temps.
+Ce programme gère une base de donnée contenant la météo des villes fournies au cours du temps. La base de donnée est gérée grace au module sqlite3.
 
 Le programme utilise l'API de OpenWeatherMap pour recupérer les informations météorologique d'une ville. Comme l'utilisation de l'API est limitée, nous devons nous contenter de 60 requetes par minutes.
 
