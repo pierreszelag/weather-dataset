@@ -4,8 +4,9 @@ from BaseDeDonnee import BaseDeDonnee
 from Controle import Controle
 import pygame
 
-pygame.init()
-screen = pygame.display.set_mode((600,600))
+pygame.init()  #Initialisation pygame
+pygame.font.init()  #Initialisation font (pour les textes)
+#screen = pygame.display.set_mode((600,600))  #Initialisation du screen à utiliser
 
 ##/!\
 ##ATTENTION : Nous sommes limites a 60 requetes par minutes. Si plusieures personnes utilisent ce programme avec la meme cle API, il risque d'y avoir des problemes.
@@ -40,6 +41,8 @@ x = threading.Thread(target=mettreAJourBDD, args=(bdd,))
 x.start()
 
 while bdd.finProgramme == False :
+    controle.display()
+    
     event = pygame.event.wait() #En attente de l'utilisateur
     
     if event.type == pygame.QUIT: #Si on clique sur le croix rouge
