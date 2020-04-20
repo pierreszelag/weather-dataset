@@ -87,7 +87,7 @@ class BaseDeDonnee:
         self.numeroVille = int(f.readline()) #La premiere ligne du fichier correspond au numero de la ville a laquelle on a arrete l'enregistrement la derniere fois.
         ligne = f.readline()
         while ligne != "":
-            self.listeVilles += [ligne]  #On recupere les villes
+            self.listeVilles += [supprimerRetourLigne(ligne)]  #On recupere les villes en enlevant le \t\n
             ligne = f.readline()
         f.close()
         self.tailleVilles = len(self.listeVilles) -1 #La premiere ligne n'est pas une ville    
@@ -100,7 +100,6 @@ class BaseDeDonnee:
         listeRequetes = []
         for i in range(60) : #On dispose de 60 requetes par minute
             if self.finProgramme == True :
-                print("ok5")
                 return None
             ville = self.listeVilles[(self.numeroVille +i)%self.tailleVilles]
             req = requests.get("http://api.openweathermap.org/data/2.5/weather?q="+ville+",fr&appid="+self.cleAPI)  #Recupere la meteo d'une ville avec notre cle API
@@ -109,7 +108,6 @@ class BaseDeDonnee:
                 #On ajoute le resultat dans la liste de requetes
                 listeRequetes += [[ville, getDate(data), getTemperature(data), getTemps(data)]]
         self.tempsDernieresRequetes = datetime.datetime.now() #On enregistre l'heure de la derniere serie de requete pour attendre 60 secondes
-        print("ok1")  
         #Si l'utilisateur ouvre la BDD pour une recherche, on attend qu'il la ferme avant de l'ouvrir pour la mettre à jour (cela ne devrait pas prendre plus de quelques millisecondes en théorie)
         while self.ouvrirBDDautorise == False :
             time.sleep(0.5)
@@ -123,8 +121,7 @@ class BaseDeDonnee:
                            VALUES(?, ?, ?, ?)""",(requete[0], requete[1], requete[2], requete[3]))
         conn.commit()   #commit les modifications
         conn.close()   #ferme la connection
-        self.numeroVille = (self.numeroVille+60)%self.tailleVilles #On indente les 60 villes que maintenant, au cas où on cut le programme pendant les requetes. (des villes n'auraient pas ete enregistrees)
-        print("ok2")         
+        self.numeroVille = (self.numeroVille+60)%self.tailleVilles #On indente les 60 villes que maintenant, au cas où on cut le programme pendant les requetes. (des villes n'auraient pas ete enregistrees)        
         #On recupere le texte du document villes
         recup = open(self.fichierVilles, "r")
         lignes = recup.readlines()  #On enregistre a quelle ville on s'est arrete dans le document.
@@ -154,6 +151,14 @@ class BaseDeDonnee:
          
             
 ##FONCTIONS UTILISEES POUR TRAITER LES REPONSES DE OPENWEATHERMAP (ne necessitant pas d'etre dans la classe BaseDeDonnee)
+def supprimerRetourLigne(ligne):
+    newLigne = ""
+    for i in ligne :
+        if ord(i) != 10 :
+            newLigne += i
+    return newLigne
+        
+
 def getTemperature(dataRequest):   #Recupere la temperature a partir du resultat de la requete
     return(dataRequest['main']['temp'])
 
