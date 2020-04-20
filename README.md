@@ -30,6 +30,8 @@ Ce programme permettra les choses suivantes :
 
 -Que ce soit pour la liste des villes ou la liste des resultats, si la liste est trop longue pour être affichée sur une page, il y aura un bouton "retour" et un bouton "suivant" permettant de les éléments non affichés.
 
+-Chaque ville mise à jour est écrite dans un cadre à droite de l'écran.
+
 
 •INSTALLATION :
 
@@ -82,7 +84,7 @@ Dans ce cas là, la BDD ne peut être ouverte par le thread pour être mise à j
 La première ligne du fichier villes.txt est un nombre. Ce nombre correspond au numéro de la ville à laquelle on s'est arrêté lors de la dernière mise à jour de la BDD. A chaque mise à jour de la BDD, on modifie cette valeur directement dans le fichier .txt. Cela permet de fermer puis réouvrir le programme, sans recommencer à la première ville de la liste.
 
 
-•FERMETURE DU PROGRAMME :
+•FERMETURE DU PROGRAMME PENDANT UNE MISE A JOUR:
 
 La fermeture propre du programme est un problème. Quand on clique sur la croix de l'interface graphique, on veut que le programme s'arrête le plus vite possible. Cela pose deux problèmes:
 -Arreter le thread proprement.
