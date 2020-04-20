@@ -21,9 +21,19 @@ class Controle :
     #INITIALISATION    
     def initialiser(self):
         self.listeVilles = self.bdd.getListeVilles()
-        
+        self.villesCherchees = self.bdd.getListeVilles()
+    
+    #TOUCHES DE CLAVIER    
     def inputKeyboard(self, event):
-        print(event)
+        if self.ecrire == False : #Si on a pas le droit d'écrire on passe.
+            pass
+        elif (33 <= event.key <= 122) and len(self.barreRecherche) <= 15:
+            self.barreRecherche += event.unicode
+            self.correspondanceSuivante() #prend l'ancienne liste villesCherchees et cherche les elements qui peuvent toujours correspondre à la barre de recherche
+        
+        elif (event.key == 8) and self.barreRecherche != "" :
+            self.barreRecherche = self.barreRecherche[:-1]  #On supprime la derniere lettre
+            self.correspondance() #On recherche a partie de la listeVilles de base
         
     #ON VA TESTER LES BOUTONS. CHAQUE BOUTON QUI NE CORRESPOND PAS VA APPELER LE SUIVANT
     def inputMouse(self, event):
@@ -33,7 +43,7 @@ class Controle :
     
     def clicBarreRecherche(self, x, y): #clic sur la barre de recherche
         if (575 <= x <= 715) and (50 <= y <= 90):
-            pass
+            self.ecrire = True
         else :
             self.ecrire = False #On a clique en dehors de la barre de recherche. On ne peut plus ecrire dedans.
             self.clicResultats(x, y) #clic sur la zone des resultats
@@ -46,21 +56,41 @@ class Controle :
                 
     def clicRetour(self, x, y): #clic sur le bouton retour
         if (450 <= x <= 480) and (10 <= y <= 40):
-            pass
+            self.setNumeroVilleDown()
         else :
             self.clicSuivant(x, y) #clic sur le bouton suivant
             
     def clicSuivant(self, x, y): #clic sur le bouton suivant
         if (500 <= x <= 530) and (10 <= y <= 40):
-            pass
-        else :
-            self.clicValider(x, y) #clic sur le bouton valider
-
-    def clicValider(self, x, y): #clic sur le bouton valider
-        if (730 <= x <= 760) and (55 <= y <= 85):
-            pass
+            self.setNumeroVilleUp()
         
-    
+        
+    #FONCTIONS UTILES
+    def setNumeroVilleDown(self):
+        if self.numeroVilleCherchee >= 20 :
+            self.numeroVilleCherchee -= 20
+        else :
+            self.numeroVilleCherchee = 0
+            
+    def setNumeroVilleUp(self):
+        if self.numeroVilleCherchee + 20 < len(self.villesCherchees):
+            self.numeroVilleCherchee += 20
+            
+    def correspondanceSuivante(self):
+        newListeVilles = []
+        for k in self.villesCherchees :
+            if k.find(self.barreRecherche) != -1 :
+                newListeVilles += [k]
+        self.villesCherchees = newListeVilles
+        
+    def correspondance(self):
+        newListeVilles = []
+        for k in self.listeVilles :
+            if k.find(self.barreRecherche) != -1 :
+                newListeVilles += [k]
+        self.villesCherchees = newListeVilles
+            
+        
     #INTERFACE GRAPHIQUE
     def display(self):  #On met tout en argument (les arguments vides ne seront pas utilises), la classe Affichage se chargera du tri.
                         #On aurait pu faire l'affichage dans cette classe. L'utilite est de gagner en clarte.
