@@ -13,9 +13,9 @@ class Controle :
         self.barreRecherche = "" #texte ecrit dans la barre de recherche
         self.villesCherchees = [] #liste des villes qu'il faudra afficher
         self.numeroVilleCherchee = 0 #numero de la premiere ville qu'on affiche
-        self.listeReponses = [] #liste des responses recuperees dans la bdd
-        self.numeroReponse = 0 #numero de la premiere reponse qu'on affiche
-        self.typeAffichage = "Villes" #Si on doit afficher le tableau "Ville" ou le tableau "Recherche"
+        self.listeResultats = [] #liste des responses recuperees dans la bdd
+        self.numeroResultat = 0 #numero de la premiere reponse qu'on affiche
+        self.typeAffichage = "Villes" #Si on doit afficher le tableau "Ville" ou le tableau "Resultats"
         
         
     #INITIALISATION    
@@ -39,57 +39,84 @@ class Controle :
     def inputMouse(self, event):
         x = event.pos[0]
         y = event.pos[1]
-        self.clicBarreRecherche(x, y) #clic sur la barre de recherche
+        self.clicBarreRecherche(x,y)
     
     def clicBarreRecherche(self, x, y): #clic sur la barre de recherche
         if (575 <= x <= 715) and (50 <= y <= 90):
             self.ecrire = True
         else :
             self.ecrire = False #On a clique en dehors de la barre de recherche. On ne peut plus ecrire dedans.
+            self.clicRetourAffichage(x, y) #clic sur le bouton retour de gauche
+            
+    def clicRetourAffichage(self, x,y) :  #clic sur le bouton retour de gauche
+        if (50 <= x <= 80) and (10 <= y <= 40) and self.typeAffichage == "Resultats":
+            self.typeAffichage = "Villes"
+        else :
             self.clicResultats(x, y) #clic sur la zone des resultats
             
     def clicResultats(self, x, y): #clic sur la zone des resultats
-        if (50 <= x <= 550) and (50 <= y <= 550) :
-            pass
+        if (50 <= x <= 550) and (50 <= y <= 550) and self.typeAffichage == "Villes":
+            self.demanderResultats(x,y) #Recupere la liste des resultats a afficher.
         else :
             self.clicRetour(x, y) #clic sur le bouton retour
                 
     def clicRetour(self, x, y): #clic sur le bouton retour
-        if (450 <= x <= 480) and (10 <= y <= 40):
+        if (450 <= x <= 480) and (10 <= y <= 40) and self.typeAffichage == "Villes":
             self.setNumeroVilleDown()
+        elif (450 <= x <= 480) and (10 <= y <= 40) and self.typeAffichage == "Resultats":
+            self.setNumeroResultatDown()
         else :
             self.clicSuivant(x, y) #clic sur le bouton suivant
             
     def clicSuivant(self, x, y): #clic sur le bouton suivant
-        if (500 <= x <= 530) and (10 <= y <= 40):
+        if (500 <= x <= 530) and (10 <= y <= 40) and self.typeAffichage == "Villes":
             self.setNumeroVilleUp()
-        
+        elif (500 <= x <= 530) and (10 <= y <= 40) and self.typeAffichage == "Resultats":
+            self.setNumeroResultatUp()       
         
     #FONCTIONS UTILES
-    def setNumeroVilleDown(self):
+    def setNumeroVilleDown(self):  #Descend le numeroVilleCherchee pour revenir une page en arriere
         if self.numeroVilleCherchee >= 20 :
             self.numeroVilleCherchee -= 20
         else :
             self.numeroVilleCherchee = 0
             
-    def setNumeroVilleUp(self):
+    def setNumeroVilleUp(self):  #Monte le numeroVilleCherchee pour aller une page en avant
         if self.numeroVilleCherchee + 20 < len(self.villesCherchees):
             self.numeroVilleCherchee += 20
+
+    def setNumeroResultatDown(self):  #Descend le numeroVilleCherchee pour revenir une page en arriere
+        if self.numeroResultat >= 10 :
+            self.numeroResultat -= 10
+        else :
+            self.numeroResultat = 0
             
-    def correspondanceSuivante(self):
+    def setNumeroResultatUp(self):  #Monte le numeroVilleCherchee pour aller une page en avant
+        if self.numeroResultat + 10 < len(self.listeResultats):
+            self.numeroResultat += 10
+
+            
+    def correspondanceSuivante(self):  #Cherche quels mots contiennent la nouvelle chaine de caractere. On se base sur la liste précédente.
         newListeVilles = []
         for k in self.villesCherchees :
             if k.find(self.barreRecherche) != -1 :
                 newListeVilles += [k]
         self.villesCherchees = newListeVilles
         
-    def correspondance(self):
+    def correspondance(self):  #Cherche quels mots contienne la nouvelle chaine de caractere. On se base sur la liste de depart listeVilles.
         newListeVilles = []
         for k in self.listeVilles :
             if k.find(self.barreRecherche) != -1 :
                 newListeVilles += [k]
         self.villesCherchees = newListeVilles
             
+    def demanderResultats(self, x, y):  #On clique sur une ville. On demande ses resultats à la bdd.
+        num = self.numeroVilleCherchee + ((y - 50) //50) + ((x - 50) //250)*10
+        if num < len(self.villesCherchees) :
+            self.numeroResultat = 0 #On reinitialise le numero de la premiere reponse a afficher
+            ville = self.villesCherchees[num]
+            self.listeResultats = self.bdd.recuperer(ville)
+            self.typeAffichage = "Resultats"
         
     #INTERFACE GRAPHIQUE
     def display(self):  #On met tout en argument (les arguments vides ne seront pas utilises), la classe Affichage se chargera du tri.
@@ -97,9 +124,10 @@ class Controle :
         self.affichage.display(self.barreRecherche,
                                self.villesCherchees,
                                self.numeroVilleCherchee,
-                               self.listeReponses,
-                               self.numeroReponse,
+                               self.listeResultats,
+                               self.numeroResultat,
                                self.typeAffichage)
         
         
+    
     
