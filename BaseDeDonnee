@@ -24,45 +24,16 @@ class BaseDeDonnee:
         self.numeroVille = None  #Le numero de la ville qu'on est en train d'enregistrer dans la bdd
         self.tempsDernieresRequetes = None  #Variable de temps utilisee pour ne pas depasser nos 60 requetes par minutes autorisees.
         
-        # #Recuperation de BDD et affichage
-        # self.affichage = Affichage()
-        # self.barreRecherche = "" #texte ecrit dans la barre de recherche
-        # self.villesCherchees = [] #liste des villes qu'il faudra afficher
-        # self.numeroVilleCherchee = 0 #numero de la premiere ville qu'on affiche
-        # self.listeReponses = [] #liste des responses recuperees dans la bdd
-        # self.numeroReponse = 0 #numero de la premiere reponse qu'on affiche
-        # self.typeAffichage = "Villes" #Si on doit afficher le tableau "Ville" ou le tableau "Recherche"
-        
         
     ##GETTERS
     def getListeVilles(self):
         return self.listeVilles
     
-    # def getTailleVillesCherchees(self):
-    #     return len(self.villesCherchees)
         
     #SETTERS
     def setFinProgramme(self): #Le programme doit s'arreter.
         self.finProgramme = True
         
-    # def setBarreRecherche(self, texte):
-    #     self.barreRecharge = texte
-        
-    # def setVillesCherchees(self, liste):
-    #     self.villesCherchees = liste
-        
-    # def setNumeroVilleCherchee(self, numero):
-    #     self.numeroVilleCherchee = numero
-        
-    # def setListeReponses(self, liste):
-    #     self.listeReponses = liste
-        
-    # def setNumeroReponse(self, numero):
-    #     self.NumeroReponse = numero
-        
-    # def setTypeAffichage(self, typeAff):
-    #     self.typeAffichage = typeAff
-    
 
     ##INITIALISATION DE LA BDD ET DE LA LISTE DE VILLES    
     def initialiser(self):
@@ -138,16 +109,17 @@ class BaseDeDonnee:
     
     ##RECUPERATION DE LA BDD    
     def recuperer(self, ville):
-        self.listeReponses = []
+        listeReponses = []
         self.ouvrirBDDautorise = False  #On s'apprete à ouvrir la BDD pour la lire, on interdit donc son ouverture pour l'ecriture. (On rappelle que le programme run plusieurs choses à la fois)
         conn = sqlite3.connect('meteoBDD.db')   #Etablie la connection avec la bdd
         cursor = conn.cursor()
         cursor.execute("""SELECT ville, date, temperature, temps FROM meteo WHERE ville = ?""", (ville,))
         rows = cursor.fetchall()
         for row in rows :
-            print('{0}   date : {1} - temperature : {2}°C - temps : {3}'.format(row[0], row[1], int(row[2]-273), row[3]))
+            listeReponses += [('{0}   date : {1} - temperature : {2}°C - temps : {3}'.format(row[0], row[1], int(row[2]-273), row[3]))]
         conn.close()   #ferme la connection
         self.ouvrirBDDautorise = True #On a ferme la BDD, on autorise donc l'autre partie du programme à l'ouvrir pour la mettre à jour.
+        return listeReponses
          
             
 ##FONCTIONS UTILISEES POUR TRAITER LES REPONSES DE OPENWEATHERMAP (ne necessitant pas d'etre dans la classe BaseDeDonnee)
