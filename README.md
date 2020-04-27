@@ -1,9 +1,11 @@
+#Weather Dataset
+
 Ce programme gère une base de donnée contenant la météo des villes fournies au cours du temps. La base de donnée est gérée grace au module sqlite3.
 
 Le programme utilise l'API de OpenWeatherMap pour recupérer les informations météorologique d'une ville. Comme l'utilisation de l'API est limitée, nous devons nous contenter de 60 requetes par minutes.
 
 
-•FONCTIONNALITES :
+##FONCTIONNALITES :
 
 Ce programme permettra les choses suivantes :
 
@@ -12,7 +14,7 @@ Ce programme permettra les choses suivantes :
 -Recuperation de toutes les données météorologique d'une ville (date/heure, temperature, temps).
 
 
-•CAHIER DES CHARGES :
+##CAHIER DES CHARGES :
 
 -Nous pouvons utiliser notre propre liste de villes à enregistrer (voir partie "liste des villes à traiter").
 
@@ -33,7 +35,7 @@ Ce programme permettra les choses suivantes :
 -Chaque ville mise à jour est écrite dans un cadre à droite de l'écran.
 
 
-•INSTALLATION :
+##INSTALLATION :
 
 Pour utiliser le programme, il vous faudra copier/coller, installer les fichiers suivants :
 
@@ -50,20 +52,20 @@ Pour utiliser le programme, il vous faudra copier/coller, installer les fichiers
 -meteoBDD.db /!\ FACULTATIF /!\ Si vous lancez le programme sans ce fichier, le programme créé un fichier BDD vierge lui même. Nous vous fournissons un fichier pré-rempli pour que vous aillez plus de valeurs à manipuler. Si vous décidez d'utiliser votre propre liste de ville, il est conseillé de ne pas utiliser le fichier meteoBDD.db fourni.
 
 
-•LISTE DES VILLES A TRAITER :
+##LISTE DES VILLES A TRAITER :
 
 la liste des villes à tester est enregistré dans un fichier "villes.txt". Vous pouvez créer le votre. Pour cela, il suffit d'écrire un nom de ville par ligne. /!\ La toute première ligne de votre fichier doit être le chiffre 0 (cela sert de valeur de sauvegarde, voir partie "sauvegarde de la progression").
 
 Le fichier que nous vous fournissons contient 3000 villes. Pour cela nous avons récupéré une grosse base de donnée de 36700 villes françaises avec beaucoup d'informations qui ne sont pas utiles. On a ensuite utilisé un programme qui permet de trier les 3000 villes les plus peuplées de france et qui écrit ces dernières dans un fichier csv.
 
 
-•FICHIER BASE DE DONNEE :
+##FICHIER BASE DE DONNEE :
 
 La base de donnée est gérée par le moduble sqlite3 et est enregistrée dans un fichier nommé "meteoBDD.db".
 Ce fichier est facultatif ! Nous vous fournissons un fichier pré-rempli pour que vous puissiez expérimenter le programme. Si vous ne le téléchargez pas, le programme en crééra un vierge qui sera tout aussi fonctionnel.
 
 
-•THREADING :
+##THREADING :
 
 La base de donnée est mise à jour de 60 villes par minutes pendant que le programme tourne.
 L'utilisateur doit continuer à pouvoir utiliser le programme et accéder à la base de donnée pendant ce temps.
@@ -79,12 +81,12 @@ Dans ce cas là, la BDD ne peut être ouverte par le thread pour être mise à j
 -Le programme récupère d'abord le resultats des 60 requetes qu'il enregistre dans une liste. Cela permet une fois les 60 requetes acquises d'ouvrir la BDD, les rentrer dedans, et fermer la BDD instantanément. Cela ne prend donc que quelques millisecondes (alors qu'enregistrer les requetes une après l'autre peut garder la BDD ouverte plusieurs secondes).
 
 
-•SAUVEGARDE DE LA PROGRESSION :
+##SAUVEGARDE DE LA PROGRESSION :
 
 La première ligne du fichier villes.txt est un nombre. Ce nombre correspond au numéro de la ville à laquelle on s'est arrêté lors de la dernière mise à jour de la BDD. A chaque mise à jour de la BDD, on modifie cette valeur directement dans le fichier .txt. Cela permet de fermer puis réouvrir le programme, sans recommencer à la première ville de la liste.
 
 
-•FERMETURE DU PROGRAMME PENDANT UNE MISE A JOUR:
+##FERMETURE DU PROGRAMME PENDANT UNE MISE A JOUR:
 
 La fermeture propre du programme est un problème. Quand on clique sur la croix de l'interface graphique, on veut que le programme s'arrête le plus vite possible. Cela pose deux problèmes:
 -Arreter le thread proprement.
@@ -97,7 +99,7 @@ Il existe une variable bdd.finProgramme (bdd est une instance de la classe BaseD
 
 -Après chaque requete, si bdd.finProgramme == True, on abandonne la mise à jour de la bdd pour arreter le programme au plus vite.
 
-
+* ffd
 
 ...
 
