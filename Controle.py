@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from BaseDeDonnee import BaseDeDonnee
 from Affichage import Affichage
 
@@ -5,7 +6,7 @@ class Controle :
     def __init__(self, bdd):
         #instances en lien avec celle-ci
         self.bdd = bdd
-        self.affichage = Affichage()
+        self.affichage = Affichage(self.bdd)
         
         #Gestion de resultats et de l'affichage
         self.listeVilles = None
@@ -30,10 +31,12 @@ class Controle :
         elif (33 <= event.key <= 122) and len(self.barreRecherche) <= 15:
             self.barreRecherche += event.unicode
             self.correspondanceSuivante() #prend l'ancienne liste villesCherchees et cherche les elements qui peuvent toujours correspondre à la barre de recherche
-        
+            self.numeroVilleCherchee = 0 #On revient en premiere page.
+            
         elif (event.key == 8) and self.barreRecherche != "" :
             self.barreRecherche = self.barreRecherche[:-1]  #On supprime la derniere lettre
             self.correspondance() #On recherche a partie de la listeVilles de base
+            self.numeroVilleCherchee = 0 #On revient en premiere page.
         
     #ON VA TESTER LES BOUTONS. CHAQUE BOUTON QUI NE CORRESPOND PAS VA APPELER LE SUIVANT
     def inputMouse(self, event):
@@ -129,5 +132,3 @@ class Controle :
                                self.typeAffichage)
         
         
-    
-    
