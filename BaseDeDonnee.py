@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 import datetime
 import sqlite3
 import requests
 import time
 from Affichage import Affichage
+from copy import deepcopy
 
 class BaseDeDonnee:
     
@@ -18,6 +20,9 @@ class BaseDeDonnee:
         #Informations sur les villes
         self.listeVilles = []  #La liste des villes recuperee a partie du fichier villes
         self.tailleVilles = None  #Taille de la liste des villes
+        
+        #Informations sur les mises a jours effectuees
+        self.changements = ["" for i in range(21)]
         
         #Utilises pour mettre a jour la BDD
         self.ouvrirBDDautorise = True  #Si l'utilisateur ouvre la BDD pour faire une recherche, elle ne peut pas s'ouvrir en parallele pour la mettre à jour.
@@ -76,17 +81,24 @@ class BaseDeDonnee:
             req = requests.get("http://api.openweathermap.org/data/2.5/weather?q="+ville+",fr&appid="+self.cleAPI)  #Recupere la meteo d'une ville avec notre cle API
             data = req.json()  #Convertie la reponse au bon format
             if data['cod'] != '404' :   #On verifie que la ville ait ete trouvee
+                #Pour l'affichage progressif des mises a jour
+                a = self.changements
+                b = deepcopy(a[1:21])
+                b += [ville]
+                self.changements = b
+                
                 #On ajoute le resultat dans la liste de requetes
                 listeRequetes += [[ville, getDate(data), getTemperature(data), getTemps(data)]]
         self.tempsDernieresRequetes = datetime.datetime.now() #On enregistre l'heure de la derniere serie de requete pour attendre 60 secondes
         #Si l'utilisateur ouvre la BDD pour une recherche, on attend qu'il la ferme avant de l'ouvrir pour la mettre à jour (cela ne devrait pas prendre plus de quelques millisecondes en théorie)
         while self.ouvrirBDDautorise == False :
-            time.sleep(0.5)
+            pass
             
         #On les ajoute toutes maintenant dans la BDD (permet de garder le fichier ouvert moins longtemps) 
         conn = sqlite3.connect(self.fichierBDD)   #Etablie la connection avec la bdd
         cursor = conn.cursor()
-        for requete in listeRequetes :
+        for requete in listeRequetes :    
+            #Ajout a la bdd
             cursor.execute("""
                            INSERT INTO meteo(ville, date, temperature, temps) 
                            VALUES(?, ?, ?, ?)""",(requete[0], requete[1], requete[2], requete[3]))
