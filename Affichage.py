@@ -1,9 +1,11 @@
+# -*- coding: utf-8 -*-
 import pygame
 
 class Affichage:
     
-    def __init__(self):
+    def __init__(self, bdd):
         self.screen = pygame.display.set_mode((800,600)) #Screen à utiliser
+        self.bdd = bdd
         
         
     def display(self,   #On met tout en argument (les arguments vides ne seront pas utilises). 
@@ -20,21 +22,35 @@ class Affichage:
         pygame.draw.rect(self.screen,(0,0,0),(575,120,200,430), 2) #grand rectangle de droite
         pygame.draw.rect(self.screen,(0,0,0),(450,10,30,30), 2) #bouton retour
         pygame.draw.rect(self.screen,(0,0,0),(50,10,30,30), 2) #bouton retour affichage
-        pygame.draw.polygon(self.screen, (0,0,0), [(455,25), (475,15), (475, 35)]) #triangle retour
+        pygame.draw.polygon(self.screen, (0,0,0), [(55,25), (75,15), (75, 35)]) #triangle retour de gauche
+        pygame.draw.polygon(self.screen, (0,0,0), [(455,25), (475,15), (475, 35)]) #triangle retour de droite
         pygame.draw.rect(self.screen,(0,0,0),(500,10,30,30), 2) #bouton suivant
         pygame.draw.polygon(self.screen, (0,0,0), [(505,15), (525,25), (505, 35)]) #triangle suivant
         
         for i in range(9):
             pygame.draw.line(self.screen, (0,0,0), (50, 100+50*i), (550, 100+50*i), 2) #Commencer le tableau
-            
+        
         self.displayBarreDeRecherche(barreRecherche) #dessine la barre de recherche avec le texte
+        self.displayMisesAJours() #Ecrit les mises à jours effectuees.
+        
         if typeAffichage == "Villes" :
             self.displayVilles(villesCherchees, numeroVilleCherchee)
         
         else :
             self.displayReponses(listeReponses, numeroReponse)
+            
         
         pygame.display.flip()
+            
+    def displayMisesAJours(self):
+        font = pygame.font.SysFont("Arial", 16)
+        text = font.render("Villes recherchées :", True, (0, 0, 0))
+        self.screen.blit(text, (580, 100))
+        
+        for i in range(21):
+            font = pygame.font.SysFont("Arial", 16)
+            text = font.render(self.bdd.changements[21 -1 -i], True, (0, 0, 0))
+            self.screen.blit(text, (580, 120 + 20*i))
         
     
     def displayBarreDeRecherche(self, barreRecherche) :#Dessine la barre de recherche avec le texte
