@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 import datetime
 import threading
 from BaseDeDonnee import BaseDeDonnee
 from Controle import Controle
 import pygame
+import time
 
 pygame.init()  #Initialisation pygame
 pygame.font.init()  #Initialisation font (pour les textes)
@@ -36,6 +38,7 @@ def mettreAJourBDD(BDD):
     while bdd.finProgramme == False :
         if (BDD.tempsDernieresRequetes == None) or (datetime.datetime.now() - BDD.tempsDernieresRequetes).seconds >= 60 :
             BDD.enregistrer()
+            time.sleep(60 - (datetime.datetime.now() - BDD.tempsDernieresRequetes).seconds)
             
 x = threading.Thread(target=mettreAJourBDD, args=(bdd,))
 x.start()
@@ -43,14 +46,13 @@ x.start()
 while bdd.finProgramme == False :
     controle.display()
     
-    event = pygame.event.wait() #En attente de l'utilisateur
-    
-    if event.type == pygame.QUIT: #Si on clique sur le croix rouge
-        pygame.quit()  #On ferme la fenetre
-        bdd.setFinProgramme()  #On coupe le programme (on n'oublie pas le thread). 
-    
-    else :  #Si on appuie sur la sourie ou sur le clavier on envoie l'information au controleur
-        if event.type == pygame.MOUSEBUTTONDOWN :
-            controle.inputMouse(event) 
-        elif event.type == pygame.KEYDOWN :
-            controle.inputKeyboard(event)
+    for event in pygame.event.get() :
+        if event.type == pygame.QUIT: #Si on clique sur le croix rouge
+            pygame.quit()  #On ferme la fenetre
+            bdd.setFinProgramme()  #On coupe le programme (on n'oublie pas le thread). 
+        
+        else :  #Si on appuie sur la sourie ou sur le clavier on envoie l'information au controleur
+            if event.type == pygame.MOUSEBUTTONDOWN :
+                controle.inputMouse(event) 
+            elif event.type == pygame.KEYDOWN :
+                controle.inputKeyboard(event)
