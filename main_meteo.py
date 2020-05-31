@@ -40,7 +40,7 @@ def mettreAJourBDD(BDD):
             BDD.enregistrer()
             tempsAttente = 60 - (datetime.datetime.now() - BDD.tempsDernieresRequetes).seconds
             if tempsAttente > 0 :
-                time.sleep(60 - (datetime.datetime.now() - BDD.tempsDernieresRequetes).seconds)
+                time.sleep(tempsAttente)
             
 x = threading.Thread(target=mettreAJourBDD, args=(bdd,))
 x.start()
